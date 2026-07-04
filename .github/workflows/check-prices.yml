@@ -1,0 +1,57 @@
+name: FlightClaw price check
+
+on:
+  schedule:
+    # Every 4 hours (UTC). Adjust as you like.
+    - cron: "0 */4 * * *"
+  workflow_dispatch: {}   # allows manual runs from the Actions tab or via gh CLI
+
+permissions:
+  contents: write   # needed to commit updated price history back to the repo
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install flights
+
+      - name: Check tracked flights
+        id: check
+        run: |
+          set -o pipefail
+          python scripts/check-prices.py --threshold 5 | tee check_output.txt
+          # Flag whether anything alert-worthy happened
+          if grep -qiE "target|drop|alert" check_output.txt; then
+            echo "alert=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "alert=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Send Telegram alert
+        if: steps.check.outputs.alert == 'true'
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          MSG="✈️ FlightClaw alert:
+          $(cat check_output.txt | tail -c 3500)"
+          curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+            -d chat_id="${TG_CHAT}" \
+            --data-urlencode text="${MSG}"
+
+      - name: Commit updated price history
+        run: |
+          git config user.name "flightclaw-bot"
+          git config user.email "actions@github.com"
+          git add -f data/tracked.json
+          git diff --cached --quiet || git commit -m "chore: update price history [skip ci]"
+          git push

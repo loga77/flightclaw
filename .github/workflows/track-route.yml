@@ -1,0 +1,62 @@
+name: Track a new route
+
+on:
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: "Origin airport code(s), e.g. ZRH or ZRH,BSL"
+        required: true
+      destination:
+        description: "Destination airport code(s), e.g. JFK or JFK,EWR"
+        required: true
+      date:
+        description: "Departure date YYYY-MM-DD"
+        required: true
+      return_date:
+        description: "Return date YYYY-MM-DD (optional)"
+        required: false
+        default: ""
+      target_price:
+        description: "Target price (optional, alert fires at or below this)"
+        required: false
+        default: ""
+      cabin:
+        description: "Cabin class"
+        required: false
+        default: "ECONOMY"
+        type: choice
+        options: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST]
+
+permissions:
+  contents: write
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install flights
+
+      - name: Add route to tracking
+        run: |
+          ARGS="${{ inputs.origin }} ${{ inputs.destination }} ${{ inputs.date }}"
+          [ -n "${{ inputs.return_date }}" ] && ARGS="$ARGS --return-date ${{ inputs.return_date }}"
+          [ -n "${{ inputs.target_price }}" ] && ARGS="$ARGS --target-price ${{ inputs.target_price }}"
+          ARGS="$ARGS --cabin ${{ inputs.cabin }}"
+          python scripts/track-flight.py $ARGS
+
+      - name: Commit tracking file
+        run: |
+          git config user.name "flightclaw-bot"
+          git config user.email "actions@github.com"
+          git add -f data/tracked.json
+          git diff --cached --quiet || git commit -m "feat: track ${{ inputs.origin }} -> ${{ inputs.destination }} on ${{ inputs.date }}"
+          git push
