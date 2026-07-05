@@ -1,0 +1,44 @@
+name: Stop tracking a route
+
+on:
+  workflow_dispatch:
+    inputs:
+      match:
+        description: "Match term - removes any tracked route whose id contains it (e.g. NAP, or ZRH-NAP). Leave blank and tick remove_all to clear everything."
+        required: false
+        default: ""
+      remove_all:
+        description: "Remove ALL tracked routes"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  untrack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Remove route(s) from tracking
+        run: |
+          if [ "${{ inputs.remove_all }}" = "true" ]; then
+            python scripts/untrack-flight.py --all
+          elif [ -n "${{ inputs.match }}" ]; then
+            python scripts/untrack-flight.py "${{ inputs.match }}"
+          else
+            echo "Nothing specified. Provide a match term or tick remove_all."
+            python scripts/untrack-flight.py --list
+            exit 1
+          fi
+
+      - name: Commit tracking file
+        run: |
+          git config user.name "flightclaw-bot"
+          git config user.email "actions@github.com"
+          git add -f data/tracked.json
+          git diff --cached --quiet || git commit -m "chore: stop tracking (match='${{ inputs.match }}' all='${{ inputs.remove_all }}')"
+          git push
