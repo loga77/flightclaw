@@ -131,12 +131,19 @@ def main():
         price_entry = {"timestamp": now, "best_price": None, "airline": None}
 
         if results:
-            flight = results[0]
-            if isinstance(flight, tuple):
-                flight = flight[0]
-            price_entry["best_price"] = round(flight.price, 2)
-            if flight.legs:
-                price_entry["airline"] = flight.legs[0].airline.name
+            # search_with_currency returns (flight_data, booking_token) tuples.
+            # For a round-trip, flight_data is (outbound, ret); for one-way it
+            # is a single Flight. Mirror check-prices.py so the round-trip price
+            # (ret.price = true round-trip total) is recorded, not a tuple.
+            r = results[0]
+            flight_data = r[0] if isinstance(r, tuple) else r
+            if isinstance(flight_data, tuple):
+                outbound, ret = flight_data
+            else:
+                outbound, ret = flight_data, None
+            price_entry["best_price"] = round(ret.price if ret is not None else outbound.price, 2)
+            if outbound.legs:
+                price_entry["airline"] = outbound.legs[0].airline.name
 
         entry = {
             "id": route_id,
