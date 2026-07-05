@@ -7,7 +7,7 @@ on:
         description: "Origin airport code(s), e.g. ZRH or ZRH,BSL"
         required: true
       destination:
-        description: "Destination airport code(s), e.g. JFK or JFK,EWR"
+        description: "Destination airport code(s), e.g. NAP or NAP,BRI"
         required: true
       date:
         description: "Departure date YYYY-MM-DD"
@@ -17,7 +17,7 @@ on:
         required: false
         default: ""
       target_price:
-        description: "Target price (optional, alert fires at or below this)"
+        description: "Per-person target price in USD (alert fires at or below)"
         required: false
         default: ""
       cabin:
@@ -26,6 +26,12 @@ on:
         default: "ECONOMY"
         type: choice
         options: [ECONOMY, PREMIUM_ECONOMY, BUSINESS, FIRST]
+      stops:
+        description: "Max stops"
+        required: false
+        default: "ANY"
+        type: choice
+        options: [ANY, NON_STOP, ONE_STOP, TWO_PLUS_STOPS]
 
 permissions:
   contents: write
@@ -50,7 +56,8 @@ jobs:
           ARGS="${{ inputs.origin }} ${{ inputs.destination }} ${{ inputs.date }}"
           [ -n "${{ inputs.return_date }}" ] && ARGS="$ARGS --return-date ${{ inputs.return_date }}"
           [ -n "${{ inputs.target_price }}" ] && ARGS="$ARGS --target-price ${{ inputs.target_price }}"
-          ARGS="$ARGS --cabin ${{ inputs.cabin }}"
+          ARGS="$ARGS --cabin ${{ inputs.cabin }} --stops ${{ inputs.stops }}"
+          echo "Running: track-flight.py $ARGS"
           python scripts/track-flight.py $ARGS
 
       - name: Commit tracking file
