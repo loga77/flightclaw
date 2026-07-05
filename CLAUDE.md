@@ -55,3 +55,32 @@ If the FlightClaw MCP server is connected, prefer these tools:
 - Dates must be in the future; validate before triggering workflows.
 - Prices from GitHub runners resolve in USD (US IPs). Mention this
   when discussing target prices.
+
+## How to stop tracking a route
+
+Stopping a route runs the `Stop tracking a route` workflow, which calls
+`scripts/untrack-flight.py` and commits the updated `data/tracked.json`.
+
+```bash
+# Remove a specific route (narrow match on the route id)
+gh workflow run untrack-route.yml -f match=ZRH-NAP
+
+# Remove all routes to a destination (broad match)
+gh workflow run untrack-route.yml -f match=NAP
+
+# Clear everything
+gh workflow run untrack-route.yml -f remove_all=true
+```
+
+The match term is a case-insensitive substring of the route id
+(e.g. `ZRH-NAP-2026-07-18-RT-2026-07-25`). Prefer the narrowest term
+that identifies the route. To see current ids first, read
+`data/tracked.json` or run `python scripts/untrack-flight.py --list`
+locally. Always confirm which routes will be removed before running a
+broad match or `remove_all`.
+
+## Note on pushing
+
+The price-check workflow commits price history to `data/tracked.json`
+autonomously, so the remote is often ahead of local. Before pushing any
+change, pull first: `git pull --no-rebase` then push.
