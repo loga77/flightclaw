@@ -1,0 +1,42 @@
+[
+  {
+    "id": "ZRH-NAP-2026-07-18-RT-2026-07-25",
+    "origin": "ZRH",
+    "destination": "NAP",
+    "date": "2026-07-18",
+    "return_date": "2026-07-25",
+    "cabin": "ECONOMY",
+    "stops": "ONE_STOP",
+    "target_price": 249.0,
+    "exclude_basic": false,
+    "currency": "USD",
+    "added_at": "2026-07-05T22:16:01.754656+00:00",
+    "price_history": [
+      {
+        "timestamp": "2026-07-05T22:16:01.754656+00:00",
+        "best_price": 472.0,
+        "airline": "AZ"
+      }
+    ]
+  },
+  {
+    "id": "BSL-NAP-2026-07-18-RT-2026-07-25",
+    "origin": "BSL",
+    "destination": "NAP",
+    "date": "2026-07-18",
+    "return_date": "2026-07-25",
+    "cabin": "ECONOMY",
+    "stops": "ONE_STOP",
+    "target_price": 249.0,
+    "exclude_basic": false,
+    "currency": "USD",
+    "added_at": "2026-07-05T22:16:05.624640+00:00",
+    "price_history": [
+      {
+        "timestamp": "2026-07-05T22:16:05.624640+00:00",
+        "best_price": 290.0,
+        "airline": "U2"
+      }
+    ]
+  }
+]
