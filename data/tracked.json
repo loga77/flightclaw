@@ -16,6 +16,11 @@
         "timestamp": "2026-07-05T22:16:01.754656+00:00",
         "best_price": 472.0,
         "airline": "AZ"
+      },
+      {
+        "timestamp": "2026-07-06T02:23:27.911850+00:00",
+        "best_price": 360.0,
+        "airline": "VY"
       }
     ]
   },
@@ -34,6 +39,11 @@
     "price_history": [
       {
         "timestamp": "2026-07-05T22:16:05.624640+00:00",
+        "best_price": 290.0,
+        "airline": "U2"
+      },
+      {
+        "timestamp": "2026-07-06T02:23:27.911850+00:00",
         "best_price": 290.0,
         "airline": "U2"
       }
