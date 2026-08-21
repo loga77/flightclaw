@@ -683,5 +683,25 @@
         "airline": "KL"
       }
     ]
+  },
+  {
+    "id": "FRA-OLB-2026-10-09",
+    "origin": "FRA",
+    "destination": "OLB",
+    "date": "2026-10-09",
+    "return_date": null,
+    "cabin": "ECONOMY",
+    "stops": "ANY",
+    "target_price": null,
+    "exclude_basic": false,
+    "currency": "USD",
+    "added_at": "2026-08-21T21:15:36.362593+00:00",
+    "price_history": [
+      {
+        "timestamp": "2026-08-21T21:15:36.362593+00:00",
+        "best_price": 191.0,
+        "airline": "DE"
+      }
+    ]
   }
 ]
