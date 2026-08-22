@@ -692,7 +692,7 @@
     "return_date": null,
     "cabin": "ECONOMY",
     "stops": "ANY",
-    "target_price": null,
+    "target_price": 160.0,
     "exclude_basic": false,
     "currency": "USD",
     "added_at": "2026-08-21T21:15:36.362593+00:00",
