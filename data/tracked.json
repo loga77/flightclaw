@@ -694,7 +694,7 @@
     "stops": "ANY",
     "target_price": 160.0,
     "exclude_basic": false,
-    "currency": "MXN",
+    "currency": "USD",
     "added_at": "2026-08-21T21:15:36.362593+00:00",
     "price_history": [
       {
@@ -750,6 +750,11 @@
       {
         "timestamp": "2026-09-10T08:31:11.432947+00:00",
         "best_price": 3187.0,
+        "airline": "DE"
+      },
+      {
+        "timestamp": "2026-09-10T15:32:35.443854+00:00",
+        "best_price": 189.0,
         "airline": "DE"
       }
     ]
